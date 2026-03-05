@@ -1052,8 +1052,9 @@ Starting with Gradle 9.0.0, all link:{groovyDslPath}/org.gradle.api.tasks.bundli
 - Directories have fixed permissions set to `0755`
 - Files have fixed permissions set to `0644`
 
-You can <<sec:setting_file_permissions,further customize>> the link:{groovyDslPath}/org.gradle.api.tasks.bundling.AbstractArchiveTask.html#org.gradle.api.tasks.bundling.AbstractArchiveTask:dirPermissions-org.gradle.api.Action-[directory permissions]
-or link:{groovyDslPath}/org.gradle.api.tasks.bundling.AbstractArchiveTask.html#org.gradle.api.tasks.bundling.AbstractArchiveTask:filePermissions-org.gradle.api.Action-[file permissions]
+You can <<sec:setting_file_permissions,further customize>> the link:{groovyDslPath}/org.gradle.api.tasks.bundling.AbstractArchiveTask.html#org.gradle.api.tasks.bundling.AbstractArchiveTask:dirPermissions-org.gradle.api.Action-[directory permissions],
+link:{groovyDslPath}/org.gradle.api.tasks.bundling.AbstractArchiveTask.html#org.gradle.api.tasks.bundling.AbstractArchiveTask:filePermissions-org.gradle.api.Action-[file permissions],
+or link:{groovyDslPath}/org.gradle.api.tasks.bundling.AbstractArchiveTask.html#org.gradle.api.tasks.bundling.AbstractArchiveTask:reproducibleFileTimestamp[file timestamps]
 while keeping the archives reproducible.
 
 [[sec:revert_reproducible_archives]]
@@ -1089,6 +1090,16 @@ We recognize two main cases, where users may want to change the permissions of f
 For such configuration see <<#sec:revert_reproducible_archives,Preserve file system-defined aspects>> section.
 2. Case where the permissions of files and directories in the archive should be set to specific values, for example to set the executable bit on a script file.
 For such configuration see <<#sec:setting_file_permissions,Setting file permissions>> section.
+
+[[sec:reproducible_timestamp]]
+=== Reproducible timestamp for files inside archives
+
+If desired, the timestamp can be specified for files inside reproducible archives.
+
+====
+include::sample[dir="snippets/reference/gradle-types/archives/kotlin",files="build.gradle.kts[tags=reproducible-timestamp]"]
+include::sample[dir="snippets/reference/gradle-types/archives/groovy",files="build.gradle[tags=reproducible-timestamp]"]
+====
 
 [[sec:unpacking_archives_example]]
 == Unpacking archives

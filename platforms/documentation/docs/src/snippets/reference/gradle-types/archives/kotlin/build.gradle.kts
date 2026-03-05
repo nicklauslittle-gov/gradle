@@ -58,3 +58,9 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 }
 // end::revert-reproducible[]
 
+// tag::reproducible-timestamp[]
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    reproducibleFileTimestamp = java.time.Instant.ofEpochSecond(Long.parseLong(System.getenv("BUILD_ID").toLong())).toEpochMilli()
+}
+// end::reproducible-timestamp[]

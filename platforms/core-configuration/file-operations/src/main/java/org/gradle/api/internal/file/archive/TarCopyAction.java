@@ -19,12 +19,14 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.UnixStat;
 import org.gradle.api.GradleException;
+import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.file.FileCopyDetails;
 import org.gradle.api.internal.file.CopyActionProcessingStreamAction;
 import org.gradle.api.internal.file.archive.compression.ArchiveOutputStreamFactory;
 import org.gradle.api.internal.file.copy.CopyAction;
 import org.gradle.api.internal.file.copy.CopyActionProcessingStream;
 import org.gradle.api.internal.file.copy.FileCopyDetailsInternal;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.WorkResult;
 import org.gradle.api.tasks.WorkResults;
 import org.gradle.internal.ErroringAction;
@@ -32,6 +34,7 @@ import org.gradle.internal.IoActions;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.util.OptionalLong;
 
 public class TarCopyAction implements CopyAction {
     /**
@@ -46,12 +49,19 @@ public class TarCopyAction implements CopyAction {
 
     private final File tarFile;
     private final ArchiveOutputStreamFactory compressor;
-    private final boolean preserveFileTimestamps;
+    private final OptionalLong fileTimestampMillis;
 
-    public TarCopyAction(File tarFile, ArchiveOutputStreamFactory compressor, boolean preserveFileTimestamps) {
+    public TarCopyAction(File tarFile, ArchiveOutputStreamFactory compressor, boolean preserveFileTimestamps, Provider<Long> reproducibleFileTimestamp) {
         this.tarFile = tarFile;
         this.compressor = compressor;
-        this.preserveFileTimestamps = preserveFileTimestamps;
+
+        if (!reproducibleFileTimestamp.isPresent()) {
+            this.fileTimestampMillis = preserveFileTimestamps ? OptionalLong.empty() : OptionalLong.of(CONSTANT_TIME_FOR_TAR_ENTRIES);
+        } else if (preserveFileTimestamps) {
+            throw new InvalidUserDataException("The reproducible file timestamp property cannot be used when the preserve file timestamps property is set to true");
+        } else {
+            this.fileTimestampMillis = OptionalLong.of(Math.max(reproducibleFileTimestamp.get(), CONSTANT_TIME_FOR_TAR_ENTRIES));
+        }
     }
 
     @Override
@@ -133,6 +143,6 @@ public class TarCopyAction implements CopyAction {
     }
 
     private long getArchiveTimeFor(FileCopyDetails details) {
-        return preserveFileTimestamps ? details.getLastModified() : CONSTANT_TIME_FOR_TAR_ENTRIES;
+        return fileTimestampMillis.orElseGet(details::getLastModified);
     }
 }

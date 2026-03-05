@@ -95,6 +95,9 @@ See the [Environment variables](userguide/build_environment.html#sec:gradle_envi
 ### Build authoring improvements
 Gradle provides [rich APIs](userguide/getting_started_dev.html) for build engineers and plugin authors, enabling the creation of custom, reusable build logic and better maintainability.
 
+#### Archive tasks allow custom timestamp
+Archive tasks can be configured to use a [custom timestamp](userguide/working_with_files.html#sec:reproducible_timestamp) for all files in the archive.
+
 ### Platform and toolchain management
 Gradle provides comprehensive support for [Native development](userguide/building_cpp_projects.html) and [JVM languages](userguide/building_java_projects.html), featuring automated [Toolchains](userguide/toolchains.html) for seamless JDK management.
 
