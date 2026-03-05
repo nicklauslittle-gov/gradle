@@ -1,0 +1,17 @@
+name: "Run core tests"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Run core tests
+        run: |
+          ./gradlew :core:check --info || (cat /home/runner/work/gradle/gradle/subprojects/core/build/reports/tests/embeddedIntegTest/index.html && false)

@@ -1,0 +1,17 @@
+name: "Sanity check"
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Sanity check
+        run: |
+          ./gradlew sanityCheck || (cat /home/runner/work/gradle/gradle/testing/architecture-test/build/reports/binary-compatibility/report.html && false)
